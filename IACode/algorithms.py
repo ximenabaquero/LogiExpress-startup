@@ -2,12 +2,7 @@
 Módulo de algoritmos de rutas más cortas.
 Implementa Dijkstra (SSSP) y Floyd-Warshall (APSP).
 """
-
-import heapq
-
-
-def dijkstra(graph, start):
-    """
+"""
     Implementa el algoritmo de Dijkstra para encontrar las rutas más cortas
     desde un nodo origen a todos los demás nodos.
     
@@ -20,6 +15,11 @@ def dijkstra(graph, start):
         - distances: dict con distancias mínimas desde start
         - predecessors: dict con nodos predecesores para reconstruir rutas
     """
+import heapq
+
+
+def dijkstra(graph, start):
+
     distances = {node: float('inf') for node in graph.get_nodes()}
     predecessors = {node: None for node in graph.get_nodes()}
     distances[start] = 0
@@ -77,21 +77,20 @@ def reconstruct_path(predecessors, start, end):
     path.reverse()
     
     return path if path[0] == start else None
-
-
+"""
+  Implementa el algoritmo de Floyd-Warshall para encontrar todas las rutas
+  más cortas entre todos los pares de nodos.
+  
+  Args:
+      graph: Objeto Graph
+      
+  Returns:
+      Tupla (distances, next_node) donde:
+      - distances: matriz de distancias mínimas entre todos los pares
+      - next_node: matriz para reconstruir rutas
+  """
 def floyd_warshall(graph):
-    """
-    Implementa el algoritmo de Floyd-Warshall para encontrar todas las rutas
-    más cortas entre todos los pares de nodos.
-    
-    Args:
-        graph: Objeto Graph
-        
-    Returns:
-        Tupla (distances, next_node) donde:
-        - distances: matriz de distancias mínimas entre todos los pares
-        - next_node: matriz para reconstruir rutas
-    """
+
     nodes = graph.get_nodes()
     
     # Inicializar matrices de distancia y siguiente nodo
