@@ -1,9 +1,16 @@
 """
 Módulo de visualización de rutas y tablas.
+Incluye integración con Google Maps para visualización real.
 """
 
+try:
+    from google_maps import GoogleMapsAPI
+    GOOGLE_MAPS_AVAILABLE = True
+except ImportError:
+    GOOGLE_MAPS_AVAILABLE = False
 
-def visualize_path(path, distances, graph):
+
+def visualize_path(path, distances, graph, show_in_maps=False):
     """
     Visualiza una ruta con segmentos y tiempos.
     
@@ -51,10 +58,34 @@ def visualize_path(path, distances, graph):
         print(f"{from_node:<10} {to_node:<10} {segment_time:<15} {accumulated:<15}")
     
     print("-"*60)
+    
+    # Opción para mostrar en Google Maps
+    if show_in_maps and GOOGLE_MAPS_AVAILABLE:
+        try:
+            maps_api = GoogleMapsAPI()
+            print("\n🗺️  Opciones de Google Maps:")
+            print("1. Ver ruta en el navegador")
+            print("2. Mostrar detalles de ubicaciones")
+            
+            choice = input("\nSelecciona una opción (1-2, Enter para omitir): ").strip()
+            
+            if choice == '1':
+                maps_api.open_route_in_browser(path)
+            elif choice == '2':
+                print("\n📍 DETALLES DE UBICACIONES:")
+                print("-" * 50)
+                for node in path:
+                    maps_api.print_location_details(node)
+                    print()
+        except Exception as e:
+            print(f"⚠️  Error al conectar con Google Maps: {e}")
+    elif show_in_maps and not GOOGLE_MAPS_AVAILABLE:
+        print("\n⚠️  Google Maps no disponible. Instala dependencias: pip install -r requirements.txt")
+    
     print()
 
 
-def print_all_routes_from_source(start, distances, predecessors, graph):
+def print_all_routes_from_source(start, distances, predecessors, graph, show_maps_option=False):
     """
     Imprime todas las rutas desde un origen.
     

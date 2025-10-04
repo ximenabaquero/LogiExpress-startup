@@ -47,7 +47,9 @@ LogiExpress-startup/
 
 ## Instalación
 
-No se requieren dependencias externas. El proyecto utiliza solo la biblioteca estándar de Python.
+### Instalación Básica
+
+El proyecto básico utiliza solo la biblioteca estándar de Python:
 
 ```bash
 # Clonar el repositorio
@@ -55,14 +57,51 @@ git clone https://github.com/ximenabaquero/LogiExpress-startup.git
 cd LogiExpress-startup
 ```
 
+### Instalación con Google Maps (Recomendada)
+
+Para funcionalidades completas con integración de Google Maps:
+
+```bash
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Configurar API key de Google Maps (opcional)
+# Editar config.py y agregar tu API key
+```
+
+### Requisitos para Google Maps
+
+1. **API Key de Google Cloud Platform**
+   - Crea un proyecto en [Google Cloud Console](https://console.cloud.google.com/)
+   - Habilita las APIs: Maps JavaScript API, Directions API, Distance Matrix API
+   - Crea credenciales (API Key)
+
+2. **Dependencias Python**
+   - `requests>=2.28.0`
+   - `urllib3>=1.26.0`
+
 ## Uso
 
-### Interfaz CLI
-
-Ejecutar la aplicación:
+### Interfaz CLI Básica
 
 ```bash
 python main.py
+```
+
+### Interfaz CLI con Google Maps (Recomendada)
+
+```bash
+python main_google_maps.py
+```
+
+### Demostraciones
+
+```bash
+# Demo básico
+python demo.py
+
+# Demo con Google Maps
+python demo_google_maps.py
 ```
 
 El menú principal ofrece las siguientes opciones:
