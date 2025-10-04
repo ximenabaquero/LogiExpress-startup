@@ -1,20 +1,39 @@
 """
-main_estudiantes.py
-====================
-Versión SÚPER SIMPLE del sistema de rutas pensada para estudiantes que recién
-empiezan con grafos y algoritmos de caminos más cortos.
+main_estudiantes.py (versión estudiante)
+=======================================
+Hola! Este archivo lo hice pensando en ENTENDER Dijkstra, no en hacer algo
+perfecto. Está todo en un único archivo para leerlo de arriba a abajo sin
+abrir más cosas.
 
-IDEA CLAVE: Mostrar de la forma más clara posible cómo funciona Dijkstra.
+Mini índice:
+ 1. Grafo (diccionario simple) -> tiempos entre puntos (minutos)
+ 2. Dijkstra (con prints opcionales para ver qué hace por dentro)
+ 3. Cómo reconstruyo la ruta (usando un diccionario de padres)
+ 4. Menú en consola (muy simple) + opción de explicación + retos
+ 5. Ejemplo automático (A -> D) antes de mostrar el menú
 
-Contenido del archivo (todo en un solo lugar para que sea fácil de leer):
-1. Definición del grafo (nodos y aristas) usando un diccionario
-2. Algoritmo de Dijkstra paso a paso (con opción de ver cada iteración)
-3. Función para reconstruir la ruta encontrada
-4. Menú muy sencillo para interactuar
-5. Ejemplo automático si se ejecuta directamente
+Notas personales:
+ - Uso float('inf') como "infinito".
+ - Distancias = minutos.
+ - El diccionario padres me deja reconstruir el camino; sin él solo sabría números.
+ - La prioridad la manejo con heapq (cola de prioridad mínima).
 
-NOTA: Esta versión NO usa clases ni archivos separados para que sea
-más fácil seguir la lógica en orden.
+Diagrama (boceto rápido, no perfecto):
+     A --15--> B --25--> D --10--> E --5--> F --8--> G
+     |   \\10    \\                \\10      \\12
+     |    20      12
+     v      \\
+     C --12--> D
+     | \\15
+     |  \\30
+     v    v
+     F    E
+
+Cómo ejecutar:
+    python main_estudiantes.py
+
+Si te pierdes: ve a la función main() al final y sube desde ahí.
+Puedes llamar a retos() dentro de main si quieres ver sugerencias de práctica.
 """
 
 import heapq  # Proporciona una cola de prioridad eficiente
@@ -72,6 +91,10 @@ def dijkstra(grafo: dict, origen: str, ver_pasos: bool = False):
         distancias: dict con la mejor distancia encontrada a cada nodo
         padres: dict para poder reconstruir rutas (padres[n] = nodo anterior)
     """
+    # Dijkstra en una frase (mi resumen):
+    #   "Siempre saco el nodo más cercano pendiente y veo si puedo mejorar
+    #    las distancias de sus vecinos (relajar)."
+
     # 1. Inicializamos todas las distancias en infinito menos el origen
     distancias = {nodo: float('inf') for nodo in grafo}
     distancias[origen] = 0
@@ -85,18 +108,18 @@ def dijkstra(grafo: dict, origen: str, ver_pasos: bool = False):
     if ver_pasos:
         print('\n[INICIO DIJKSTRA]')
 
-    while cola:
+    while cola:  # Mientras haya candidatos
         # Sacamos el nodo con menor distancia conocida hasta ahora
         dist_actual, nodo = heapq.heappop(cola)
 
         if ver_pasos:
             print(f"Procesando nodo {nodo} con distancia {dist_actual}")
 
-        # Si la distancia que sacamos ya no es la mejor, la ignoramos
+        # Si la distancia que sacamos ya no es la mejor, la ignoramos (ya hay algo mejor)
         if dist_actual > distancias[nodo]:
             continue
 
-        # Revisamos cada vecino del nodo actual
+        # Revisamos cada vecino del nodo actual (relajación)
         for vecino, peso in grafo[nodo]:
             nueva_dist = dist_actual + peso
 
@@ -132,6 +155,17 @@ def reconstruir_ruta(padres: dict, origen: str, destino: str):
     ruta.reverse()
     return ruta
 
+
+def explicar_dijkstra_breve():
+    """Imprime un resumen rápido del algoritmo (en estilo estudiante)."""
+    print("\nExplicación rápida de Dijkstra:")
+    print("1. Empiezo con 0 en el origen y ∞ en los demás.")
+    print("2. Saco siempre el nodo 'pendiente' con menor distancia.")
+    print("3. Intento mejorar la distancia de cada vecino (relajar).")
+    print("4. Si mejoro, actualizo padre[vecino] para reconstruir la ruta luego.")
+    print("5. Repito hasta vaciar la cola. Listo.")
+    print("6. Ruta = ir desde el destino hacia atrás usando padres y darle la vuelta.")
+
 # ---------------------------------------------------------------------------
 # 4. MENÚ INTERACTIVO MUY SIMPLE
 # ---------------------------------------------------------------------------
@@ -164,7 +198,7 @@ def opcion_ruta_mas_corta():
     print(f"  Tiempo total: {distancias[destino]} minutos")
 
     # Mostrar tabla de segmentos
-    print('\nSegmentos:')
+    print('\nSegmentos (qué suma cada tramo):')
     acumulado = 0
     for i in range(len(ruta) - 1):
         a, b = ruta[i], ruta[i+1]
@@ -188,6 +222,19 @@ def opcion_todas_las_distancias():
             print(f"  {origen} -> {nodo}: {d} min | Ruta: {' -> '.join(ruta)}")
 
 
+def retos():
+    """Lista de retos prácticos para modificar el código."""
+    print('\nRETOS SUGERIDOS:')
+    print('1. Cambia el peso A->C a 5. ¿Qué pasa con la ruta A->D?')
+    print('2. Agrega un nodo H conectado desde G con peso 4 y prueba A->H.')
+    print('3. Elimina la arista D->E y mira si B->E sigue siendo 27.')
+    print('4. Crea una función que cuente el número de saltos en la ruta.')
+    print('5. Agrega un ciclo (ej: G->A con peso grande) y verifica que no se cuelga.')
+    print('6. Añade una opción para mostrar también el padre de cada nodo.')
+    print('7. Implementa BFS y compárala con Dijkstra cuando todos los pesos sean 1.')
+    print('8. Escribe otra versión sin mirar ésta y luego compara.')
+
+
 def menu():
     while True:
         print('\n' + '='*50)
@@ -196,8 +243,10 @@ def menu():
         print('1. Ruta más corta entre dos puntos')
         print('2. Ver todas las distancias desde un origen')
         print('3. Ver ubicaciones')
-        print('4. Salir')
-        opcion = input('\nElige una opción (1-4): ').strip()
+        print('4. Explicación breve de Dijkstra')
+        print('5. Ver retos sugeridos')
+        print('6. Salir')
+        opcion = input('\nElige una opción (1-6): ').strip()
 
         if opcion == '1':
             opcion_ruta_mas_corta()
@@ -206,20 +255,23 @@ def menu():
         elif opcion == '3':
             mostrar_ubicaciones()
         elif opcion == '4':
-            print('\n¡Hasta luego!')
+            explicar_dijkstra_breve()
+        elif opcion == '5':
+            retos()
+        elif opcion == '6':
+            print('\n¡Hasta luego! (Prueba a cambiar un peso y ejecuta de nuevo)')
             break
         else:
-            print('Opción inválida')
+            print('Opción inválida (usa 1..6)')
 
 # ---------------------------------------------------------------------------
 # 5. EJECUCIÓN DIRECTA / EJEMPLO AUTOMÁTICO
 # ---------------------------------------------------------------------------
 if __name__ == '__main__':
-    # Ejemplo rápido para que se vea algo al ejecutar sin interactuar
+    # Ejemplo rápido (antes del menú)
     print('Ejemplo rápido: calcular A -> D')
     dist, padres = dijkstra(GRAFO, 'A')
     ruta = reconstruir_ruta(padres, 'A', 'D')
     print('Ruta A->D:', ' -> '.join(ruta), '| Tiempo =', dist['D'])
-
-    # Luego lanzar el menú
+    print('(Puedes ver explicación en la opción 4 del menú)')
     menu()
