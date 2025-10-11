@@ -11,7 +11,7 @@ def main():
     """
     Entry point for testing the shortest path calculation in a real city graph.
     """
-    GOOGLE_API_KEY = "AIzaSyBW5dD65JCw0tA5mmRdhfxJS7SBhHY_vEs"
+    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
     google_maps_api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
     # ====================================================
