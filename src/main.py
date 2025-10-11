@@ -23,7 +23,7 @@ def main():
     # 2) Build a simplified graph (choose distance or duration)
     # ====================================================
     weight_mode = "distance"  # or "duration" to use Google Maps travel times
-    graph = build_simple_graph(G, weight_type=weight_mode, sample_ratio=0.001)
+    graph = build_simple_graph(google_maps_api_url= G, weight_type=weight_mode, sample_ratio=0.001)
 
     # ====================================================
     # 3) Define origin and destination coordinates (lat/lon)
