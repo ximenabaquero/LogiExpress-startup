@@ -1,17 +1,18 @@
 import osmnx as ox
-import os
 from src.api.google_maps import get_coordinates_from_address
 from src.graph.downloader import download_city_graph
 from src.graph.builder import build_simple_graph
 from src.algorithms.dijkstra import dijkstra
 from src.graph.visualizer import plot_route
+from src.security.encrypted_env import load_secret
 
 
 def main():
     """
     Entry point for testing the shortest path calculation in a real city graph.
     """
-    google_api_key = os.environ.get("GOOGLE_API_KEY")
+    load_secret()  # Pide la api key y la guarda cifrada
+    google_api_key = load_secret()
     google_maps_api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
     # ====================================================
@@ -32,9 +33,9 @@ def main():
     # ====================================================
     # 3) Se definen coordenadas de origen y destino (lat/lon)
     # ====================================================
-    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Avenida Calle 80 No. 100 - 52 Local 73 - 76, Bogotá D.C, Cundinamarca")
+    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Avenida El Dorado #100-89 Bogotá, Bogotá, Cundinamarca")
     print(f"[INFO] Origin lat={origin_lat}, lng={origin_lng}")
-    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Cra. 11 #78 - 47, Bogotá")
+    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Centro Interactivo Maloka, Cra. 68d #24A - 51, Bogotá")
     print(f"[INFO] Dest lat={dest_lat}, lng={dest_lng}")
     # Se convierten coordenadas al nodo mas cercano en el grafo obtenido con osmnx
     origin_node = ox.distance.nearest_nodes(G, X=origin_lng, Y=origin_lat)
