@@ -1,9 +1,16 @@
 import requests
 
-def compute_route_duration_seconds(google_maps_api_url, headers, origin_lat, origin_lng, dest_lat, dest_lng,
+def compute_route_duration_seconds(google_maps_api_url, GOOGLE_API_KEY, origin_lat, origin_lng, dest_lat, dest_lng,
                                    routing_preference="TRAFFIC_AWARE",
                                    departure_time=None,
                                    traffic_model=None):
+
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+        "X-Goog-Api-Key": GOOGLE_API_KEY,
+    }
+
     body = {
         "origin": {
             "location": {"latLng": {"latitude": origin_lat, "longitude": origin_lng}}

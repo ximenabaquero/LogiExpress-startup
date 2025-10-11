@@ -3,7 +3,7 @@ from src.api.google_maps import compute_route_duration_seconds
 import random
 import time
 
-def build_simple_graph(google_maps_api_url, headers, G, weight_type="distance", sample_ratio=0.001):
+def build_simple_graph(google_maps_api_url, GOOGLE_API_KEY, G, weight_type="distance", sample_ratio=0.001):
     """
     Construye un grafo simplificado para algoritmos de rutas.
 
@@ -31,7 +31,7 @@ def build_simple_graph(google_maps_api_url, headers, G, weight_type="distance", 
             else:
                 dur_s, dist_m, _ = compute_route_duration_seconds(
                     google_maps_api_url= google_maps_api_url,
-                    headers = headers,
+                    GOOGLE_API_KEY= GOOGLE_API_KEY,
                     origin_lat=lat_u,
                     origin_lng=lon_u,
                     dest_lat=lat_v,

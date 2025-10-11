@@ -1,4 +1,5 @@
 import osmnx as ox
+import os
 from src.graph.downloader import download_city_graph
 from src.graph.builder import build_simple_graph
 from src.algorithms.dijkstra import dijkstra
@@ -9,6 +10,8 @@ def main():
     """
     Entry point for testing the shortest path calculation in a real city graph.
     """
+    GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+    google_maps_api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
     # ====================================================
     # 1) Download the street network (only once per city)
@@ -23,7 +26,7 @@ def main():
     # 2) Build a simplified graph (choose distance or duration)
     # ====================================================
     weight_mode = "distance"  # or "duration" to use Google Maps travel times
-    graph = build_simple_graph(google_maps_api_url= G, weight_type=weight_mode, sample_ratio=0.001)
+    graph = build_simple_graph(google_maps_api_url=google_maps_api_url, GOOGLE_API_KEY=GOOGLE_API_KEY, G=G, weight_type=weight_mode, sample_ratio=0.001)
 
     # ====================================================
     # 3) Define origin and destination coordinates (lat/lon)
