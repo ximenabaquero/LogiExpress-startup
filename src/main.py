@@ -33,9 +33,9 @@ def main():
     # ====================================================
     # 3) Se definen coordenadas de origen y destino (lat/lon)
     # ====================================================
-    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Avenida El Dorado #100-89 Bogotá, Bogotá, Cundinamarca")
+    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=google_api_key, address="a 72c-87, Dg. 81f #72c1, Bogotá")
     print(f"[INFO] Origin lat={origin_lat}, lng={origin_lng}")
-    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Centro Interactivo Maloka, Cra. 68d #24A - 51, Bogotá")
+    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Dg. 57c Sur #62-60, Bogotá")
     print(f"[INFO] Dest lat={dest_lat}, lng={dest_lng}")
     # Se convierten coordenadas al nodo mas cercano en el grafo obtenido con osmnx
     origin_node = ox.distance.nearest_nodes(G, X=origin_lng, Y=origin_lat)
