@@ -1,0 +1,16 @@
+# --- Core de grafos y mapas ---
+osmnx==1.9.2
+networkx==3.3
+geopy==2.4.1
+
+# --- API REST ---
+fastapi==0.115.0
+uvicorn==0.30.3
+
+# --- Visualización ---
+matplotlib==3.9.2
+folium==0.17.0
+
+# --- Utilidades ---
+requests==2.32.3
+python-dotenv==1.0.1
