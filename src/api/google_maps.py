@@ -1,6 +1,6 @@
 import requests
 
-def compute_route_duration_seconds(google_maps_api_url, GOOGLE_API_KEY, origin_lat, origin_lng, dest_lat, dest_lng,
+def compute_route_duration_seconds(google_maps_api_url, google_api_key, origin_lat, origin_lng, dest_lat, dest_lng,
                                    routing_preference="TRAFFIC_AWARE",
                                    departure_time=None,
                                    traffic_model=None):
@@ -8,7 +8,7 @@ def compute_route_duration_seconds(google_maps_api_url, GOOGLE_API_KEY, origin_l
     headers = {
         "Content-Type": "application/json",
         "X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
-        "X-Goog-Api-Key": GOOGLE_API_KEY,
+        "X-Goog-Api-Key": google_api_key,
     }
 
     body = {
@@ -51,14 +51,22 @@ def compute_route_duration_seconds(google_maps_api_url, GOOGLE_API_KEY, origin_l
 
     return dur_seconds, distance_m, data
 
-# dur_s, dist_m, raw = compute_route_duration_seconds(
-#     origin_lat=4.70159, origin_lng=-74.14690,
-#     dest_lat=4.66778, dest_lng=-74.09056,
-#     routing_preference="TRAFFIC_AWARE_OPTIMAL"
-# )
-#
-#
-# print("Duración (s):", dur_s)
-# print("Duración (min):", dur_s/60)
-# print("Distancia (m):", dist_m)
-# print("Raw:", raw)
+def get_coordinates_from_address(google_api_key, address: str):
+    """
+    Gets latitude and longitude from a given address or place name using Google Maps Geocoding API.
+    """
+    endpoint = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {"address": address, "key": google_api_key}
+
+    response = requests.get(endpoint, params=params, timeout=10)
+    response.raise_for_status()
+
+    data = response.json()
+    if not data["results"]:
+        print(f"[WARN] No results found for: {address}")
+        return None, None
+
+    location = data["results"][0]["geometry"]["location"]
+    lat, lng = location["lat"], location["lng"]
+    print(f"[INFO] {address} -> lat={lat}, lng={lng}")
+    return lat, lng

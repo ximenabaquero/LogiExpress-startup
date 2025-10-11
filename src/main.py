@@ -1,5 +1,6 @@
 import osmnx as ox
 import os
+from src.api.google_maps import get_coordinates_from_address
 from src.graph.downloader import download_city_graph
 from src.graph.builder import build_simple_graph
 from src.algorithms.dijkstra import dijkstra
@@ -10,7 +11,7 @@ def main():
     """
     Entry point for testing the shortest path calculation in a real city graph.
     """
-    GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
+    GOOGLE_API_KEY = "AIzaSyBW5dD65JCw0tA5mmRdhfxJS7SBhHY_vEs"
     google_maps_api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
     # ====================================================
@@ -31,9 +32,10 @@ def main():
     # ====================================================
     # 3) Define origin and destination coordinates (lat/lon)
     # ====================================================
-    origin_lat, origin_lng = 4.70159, -74.14690
-    dest_lat, dest_lng = 4.66778, -74.09056
-
+    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=GOOGLE_API_KEY, address="Avenida Calle 80 No. 100 - 52 Local 73 - 76, Bogotá D.C, Cundinamarca")
+    print(f"[INFO] Origin lat={origin_lat}, lng={origin_lng}")
+    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=GOOGLE_API_KEY, address="Cra. 11 #78 - 47, Bogotá")
+    print(f"[INFO] Dest lat={dest_lat}, lng={dest_lng}")
     # Convert coordinates to nearest nodes in the OSMnx graph
     origin_node = ox.distance.nearest_nodes(G, X=origin_lng, Y=origin_lat)
     dest_node = ox.distance.nearest_nodes(G, X=dest_lng, Y=dest_lat)
