@@ -11,52 +11,52 @@ def main():
     """
     Entry point for testing the shortest path calculation in a real city graph.
     """
-    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+    google_api_key = os.environ.get("GOOGLE_API_KEY")
     google_maps_api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
 
     # ====================================================
-    # 1) Download the street network (only once per city)
+    # 1) Descarga informacion vial. Se limita a Bogota
     # ====================================================
     place = "Bogotá, Colombia"
-    print(f"[INFO] Downloading street network for: {place} ...")
-    G = download_city_graph(place, network_type="drive")
+    print(f"[INFO] Descargando red vial para: {place} ...")
+    G = download_city_graph(place, network_type="drive", use_cache=True, max_age_days=30)
 
-    print(f"[INFO] Graph ready: {G.number_of_nodes():,} nodes, {G.number_of_edges():,} edges")
-
-    # ====================================================
-    # 2) Build a simplified graph (choose distance or duration)
-    # ====================================================
-    weight_mode = "distance"  # or "duration" to use Google Maps travel times
-    graph = build_simple_graph(google_maps_api_url=google_maps_api_url, GOOGLE_API_KEY=GOOGLE_API_KEY, G=G, weight_type=weight_mode, sample_ratio=0.001)
+    print(f"[INFO] Grapo construido: {G.number_of_nodes():,} nodes, {G.number_of_edges():,} edges")
 
     # ====================================================
-    # 3) Define origin and destination coordinates (lat/lon)
+    # 2) Se construye grafo simplificado (Se puede construir por distancia o tiempo)
     # ====================================================
-    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=GOOGLE_API_KEY, address="Avenida Calle 80 No. 100 - 52 Local 73 - 76, Bogotá D.C, Cundinamarca")
+    weight_mode = "distance"  # "duration" Se obtienen tiempos con la api de google
+    graph = build_simple_graph(google_maps_api_url=google_maps_api_url, google_api_key=google_api_key, G=G, weight_type=weight_mode, sample_ratio=0.001)
+
+    # ====================================================
+    # 3) Se definen coordenadas de origen y destino (lat/lon)
+    # ====================================================
+    origin_lat, origin_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Avenida Calle 80 No. 100 - 52 Local 73 - 76, Bogotá D.C, Cundinamarca")
     print(f"[INFO] Origin lat={origin_lat}, lng={origin_lng}")
-    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=GOOGLE_API_KEY, address="Cra. 11 #78 - 47, Bogotá")
+    dest_lat, dest_lng = get_coordinates_from_address(google_api_key=google_api_key, address="Cra. 11 #78 - 47, Bogotá")
     print(f"[INFO] Dest lat={dest_lat}, lng={dest_lng}")
-    # Convert coordinates to nearest nodes in the OSMnx graph
+    # Se convierten coordenadas al nodo mas cercano en el grafo obtenido con osmnx
     origin_node = ox.distance.nearest_nodes(G, X=origin_lng, Y=origin_lat)
     dest_node = ox.distance.nearest_nodes(G, X=dest_lng, Y=dest_lat)
 
     print(f"[INFO] Origin node: {origin_node}, Destination node: {dest_node}")
 
     # ====================================================
-    # 4) Compute shortest path using your custom Dijkstra
+    # 4) Calcular el camino mas corto con Dijkstra
     # ====================================================
-    print(f"[INFO] Running Dijkstra based on {weight_mode} ...")
+    print(f"[INFO] Corriendo Dijkstra basado en {weight_mode} ...")
     path, total_cost = dijkstra(graph, origin_node, dest_node, weight_type=weight_mode)
 
     if weight_mode == "distance":
-        print(f"[RESULT] Shortest distance: {total_cost:.2f} meters")
+        print(f"[RESULT] Distancia mas corta: {total_cost:.2f} meters")
     else:
-        print(f"[RESULT] Fastest route: {total_cost/60:.2f} minutes")
+        print(f"[RESULT] Ruta mas rapida: {total_cost/60:.2f} minutes")
 
     print(f"[INFO] Path includes {len(path)} nodes")
 
     # ====================================================
-    # 5) Visualize the route (optional)
+    # 5) Se visualiza trayecto
     # ====================================================
     try:
         plot_route(G, path)
