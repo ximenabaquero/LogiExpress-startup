@@ -10,9 +10,14 @@ uvicorn==0.30.3
 
 # --- Visualización ---
 matplotlib==3.9.2
-folium==0.17.0
+geopandas>=0.14
+shapely>=2.0
+pyproj>=3.6
+rtree>=1.2.0     # opcional (acelera)
+folium>=0.14     # .explore usa folium internamente
+mapclassify>=2.6 # requerido por .explore
 
 # --- Utilidades ---
 requests==2.32.3
 python-dotenv==1.0.1
-cryptography-fernet==0.1.0
+cryptography==45

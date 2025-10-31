@@ -1,4 +1,16 @@
 import requests
+import unicodedata
+
+def google_key_sanity_check(google_api_key: str) -> bool:
+    # ping muy barato: geocode “Bogotá, Colombia”
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {"address": "Bogotá, Colombia", "key": google_api_key}
+    try:
+        r = requests.get(url, params=params, timeout=8)
+        data = r.json()
+        return data.get("status") == "OK"
+    except Exception:
+        return False
 
 def compute_route_duration_seconds(google_maps_api_url, google_api_key, origin_lat, origin_lng, dest_lat, dest_lng,
                                    routing_preference="TRAFFIC_AWARE",
@@ -51,22 +63,58 @@ def compute_route_duration_seconds(google_maps_api_url, google_api_key, origin_l
 
     return dur_seconds, distance_m, data
 
-def get_coordinates_from_address(google_api_key, address: str):
+def _normalize_address(addr: str) -> str:
+    # Comentarios en español, variables en inglés
+    # Normaliza caracteres y expande abreviaturas comunes en Colombia
+    s = unicodedata.normalize("NFKC", addr).strip()
+    s = s.replace("Dg.", "Diagonal ").replace("Diag.", "Diagonal ")
+    s = s.replace("Cl.", "Calle ").replace("Cra.", "Carrera ")
+    s = s.replace("#", " # ").replace("  ", " ")
+    return s
+
+def get_coordinates_from_address(
+        google_api_key: str,
+        address: str,
+        *,
+        city_hint: str | None = "Bogotá, Colombia",
+        bounds: tuple[tuple[float, float], tuple[float, float]] | None = None,
+        region: str = "co",
+        language: str = "es",
+):
     """
-    Gets latitude and longitude from a given address or place name using Google Maps Geocoding API.
+    Geocodifica con Google. Devuelve (lat, lng) en float o (None, None) si no hay resultados.
+    Acepta:
+      - city_hint: texto agregado para sesgar la búsqueda (si no está ya en address)
+      - bounds: ((sw_lat, sw_lng), (ne_lat, ne_lng)) para sesgo adicional
+      - region, language: preferencia regional/idioma
     """
     endpoint = "https://maps.googleapis.com/maps/api/geocode/json"
-    params = {"address": address, "key": google_api_key}
 
-    response = requests.get(endpoint, params=params, timeout=10)
-    response.raise_for_status()
+    addr = _normalize_address(address)
+    if city_hint and city_hint.lower() not in addr.lower():
+        addr = f"{addr}, {city_hint}"
 
-    data = response.json()
-    if not data["results"]:
-        print(f"[WARN] No results found for: {address}")
+    params = {
+        "address": addr,
+        "key": google_api_key,
+        "language": language,
+        "region": region,
+        "components": "country:CO",  # restringe a Colombia
+    }
+    if bounds:
+        (sw_lat, sw_lng), (ne_lat, ne_lng) = bounds
+        params["bounds"] = f"{sw_lat},{sw_lng}|{ne_lat},{ne_lng}"
+
+    r = requests.get(endpoint, params=params, timeout=12)
+    r.raise_for_status()
+    data = r.json()
+
+    status = data.get("status", "UNKNOWN")
+    if status != "OK" or not data.get("results"):
+        print(f"[WARN] Google Geocoding status={status} results=0 addr='{addr}'")
         return None, None
 
-    location = data["results"][0]["geometry"]["location"]
-    lat, lng = location["lat"], location["lng"]
-    print(f"[INFO] {address} -> lat={lat}, lng={lng}")
+    loc = data["results"][0]["geometry"]["location"]
+    lat, lng = float(loc["lat"]), float(loc["lng"])
+    print(f"[INFO] Geocoded: '{addr}' -> lat={lat}, lng={lng}")
     return lat, lng
