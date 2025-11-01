@@ -74,7 +74,7 @@ async def compute_route_async(
     async def _geocode_google(addr: str) -> Tuple[Optional[float], Optional[float]]:
         """
         Envuelve la llamada al geocoder de Google en un hilo,
-        pasando bounds y city_hint si la firma lo soporta.
+        pasando bounds y city_hint.
         """
         def _call():
             try:

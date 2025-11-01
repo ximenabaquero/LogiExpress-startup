@@ -186,11 +186,11 @@ class RouteGUI:
             messagebox.showwarning("Atención", "Primero construye/carga el grafo.")
             return
 
-        # Si el usuario eligió 'duration' pero no hay API key, avisar y abortar
-        if self.weight_mode_var.get() == "duration" and not self.google_api_key:
+        # Si no hay API key, avisar y abortar
+        if not self.google_api_key:
             messagebox.showwarning(
                 "API key requerida",
-                "Para usar weight='duration' necesitas cargar primero la Google API key (Load API Key)."
+                "Debes cargar la Google API key (Load API Key)."
             )
             return
 
