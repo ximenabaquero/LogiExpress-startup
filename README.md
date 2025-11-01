@@ -733,13 +733,9 @@ El código es compatible con diferentes versiones de OSMnx y maneja cambios en l
 - Los grafos se guardan en caché, las siguientes cargas serán instantáneas
 - Considera usar `use_cache=True` para reutilizar grafos descargados previamente
 
-## 📄 Licencia
-
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
-
 ## 👥 Autores
 
-LogiExpress Startup - Ximena Baquero
+LogiExpress Startup - Ximena Baquero y Jhonners Penuela
 
 ---
 
