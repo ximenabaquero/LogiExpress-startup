@@ -2,25 +2,25 @@ import heapq
 
 def dijkstra(graph, source, target, weight_type="distance"):
     """
-    Dijkstra algorithm to find the shortest path based on distance or time.
+    Algoritmo de Dijkstra para encontrar el camino más corto según distancia o tiempo.
 
     Args:
-        graph (dict): adjacency list like {node: [(neighbor, weight), ...]}
-        source (int): start node ID
-        target (int): end node ID
-        weight_type (str): "distance" or "time" (for logging clarity)
+        graph (dict): lista de adyacencia con la forma {nodo: [(vecino, peso), ...]}
+        source (int): ID del nodo de inicio
+        target (int): ID del nodo de destino
+        weight_type (str): "distance" o "time" (solo para claridad en los logs)
 
     Returns:
-        tuple: (path as list of node IDs, total_cost)
+        tuple: (path como lista de IDs de nodos, total_cost)
     """
 
-    # Initialize all distances to infinity except source
+    # Se inicializan todas las distancias en infinito excepto el origen
     cost = {node: float("inf") for node in graph}
     cost[source] = 0
     previous = {}
     visited = set()
 
-    # Priority queue (min-heap)
+    # Cola de prioridad (min-heap)
     queue = [(0, source)]
 
     while queue:
@@ -30,11 +30,11 @@ def dijkstra(graph, source, target, weight_type="distance"):
             continue
         visited.add(current_node)
 
-        # Early stop if target is reached
+        # Parada temprana si el objetivo es alcanzado
         if current_node == target:
             break
 
-        # Explore neighbors
+        # Explorar vecinos
         for neighbor, weight in graph.get(current_node, []):
             new_cost = current_cost + weight
             if new_cost < cost.get(neighbor, float("inf")):
@@ -42,7 +42,7 @@ def dijkstra(graph, source, target, weight_type="distance"):
                 previous[neighbor] = current_node
                 heapq.heappush(queue, (new_cost, neighbor))
 
-    # Reconstruct shortest path
+    # Reconstruir el camino mas corto
     path = []
     node = target
     while node in previous:
@@ -50,7 +50,7 @@ def dijkstra(graph, source, target, weight_type="distance"):
         node = previous[node]
     path.insert(0, source)
 
-    # Return path and final cost (distance in meters or time in seconds)
+    # Retorna el camino y costo final de toda la trayectoria (distancia en metros o tiempo en segundos)
     print(f"[INFO] Shortest path computed based on {weight_type}.")
     return path, cost[target]
 
