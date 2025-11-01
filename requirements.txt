@@ -1,2 +1,23 @@
+<<<<<<< HEAD
+# --- Core de grafos y mapas ---
+osmnx==1.9.2
+networkx==3.3
+geopy==2.4.1
+scikit-learn==1.7.2
+
+# --- API REST ---
+fastapi==0.115.0
+uvicorn==0.30.3
+
+# --- Visualización ---
+matplotlib==3.9.2
+folium==0.17.0
+
+# --- Utilidades ---
+requests==2.32.3
+python-dotenv==1.0.1
+cryptography-fernet==0.1.0
+=======
 requests>=2.28.0
 urllib3>=1.26.0
+>>>>>>> 55f0f2302719d77503b803327167413980842e10
